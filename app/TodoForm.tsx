@@ -44,24 +44,32 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
         closeForm();
         router.refresh();
 
-        const slackResponse = await fetch("/api/slack", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: `新しいToDoが追加されました: ${newTodo.title}`,
-          }),
-        });
-
-        if (!slackResponse.ok) {
-          console.error("Failed to send Slack message");
-        }
+        await notifySlackAboutCreation(
+          `新しいToDoが追加されました: ${newTodo.title}`
+        );
       } else {
         console.error("Failed to create new Todo");
       }
     } catch (error) {
       console.error("Error creating new Todo:", error);
+    }
+  };
+
+  const notifySlackAboutCreation = async (message: string) => {
+    try {
+      const slackResponse = await fetch("/api/slack", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (!slackResponse.ok) {
+        console.error("Failed to send Slack message");
+      }
+    } catch (error) {
+      console.error("Error sending Slack message:", error);
     }
   };
 
@@ -75,7 +83,7 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
         onChange={handleInputChange}
         className="w-full p-2 border rounded"
       />
-      <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+      <Button type="submit" className="bg-blue-600 hover:bg-blue-800">
         Submit
       </Button>
     </form>

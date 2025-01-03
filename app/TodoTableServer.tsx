@@ -1,11 +1,9 @@
-//"https://nextjs-prisma-phi.vercel.app/api/todos"
-
 import React from "react";
 import TodotableClient from "./TodotableClient";
 import { Todo } from "@/app/types";
 
 async function fetchTodos(): Promise<Todo[]> {
-  const response = await fetch("http://localhost:3000/api/todos", {
+  const response = await fetch("https://todo-slack.vercel.app/api/todos", {
     cache: "no-store",
   });
   if (!response.ok) {
